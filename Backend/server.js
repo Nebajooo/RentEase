@@ -29,7 +29,8 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
+    const ext = path.extname(file.originalname);
+    cb(null, uniqueSuffix + ext);
   },
 });
 
@@ -49,7 +50,7 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: fileFilter,
 });
 
@@ -259,7 +260,6 @@ app.get("/api/users/profile", protect, async (req, res) => {
 
 // ==================== PROPERTY ROUTES ====================
 
-// Get all properties (public)
 app.get("/api/properties", async (req, res) => {
   try {
     const properties = await Property.find({ isApproved: true })
@@ -271,7 +271,6 @@ app.get("/api/properties", async (req, res) => {
   }
 });
 
-// Get featured properties
 app.get("/api/properties/featured", async (req, res) => {
   try {
     const properties = await Property.find({ isApproved: true })
@@ -283,7 +282,6 @@ app.get("/api/properties/featured", async (req, res) => {
   }
 });
 
-// Get single property
 app.get("/api/properties/:id", async (req, res) => {
   try {
     const property = await Property.findById(req.params.id).populate(
@@ -301,16 +299,13 @@ app.get("/api/properties/:id", async (req, res) => {
   }
 });
 
-// Get landlord's properties
 app.get("/api/landlord/properties", protect, async (req, res) => {
   try {
     console.log("Fetching properties for landlord:", req.user.id);
-
     const properties = await Property.find({ landlord: req.user.id }).sort({
       createdAt: -1,
     });
     console.log(`Found ${properties.length} properties`);
-
     res.json({ success: true, properties });
   } catch (error) {
     console.error("Error fetching properties:", error);
@@ -318,7 +313,6 @@ app.get("/api/landlord/properties", protect, async (req, res) => {
   }
 });
 
-// Create property with image upload
 app.post(
   "/api/landlord/properties",
   protect,
@@ -329,10 +323,12 @@ app.post(
       console.log("Files:", req.files);
 
       if (req.user.role !== "landlord") {
-        return res.status(403).json({
-          success: false,
-          message: "Only landlords can list properties",
-        });
+        return res
+          .status(403)
+          .json({
+            success: false,
+            message: "Only landlords can list properties",
+          });
       }
 
       const {
@@ -346,7 +342,6 @@ app.post(
         amenities,
       } = req.body;
 
-      // Validate required fields
       if (
         !title ||
         !description ||
@@ -355,18 +350,18 @@ app.post(
         !bedrooms ||
         !bathrooms
       ) {
-        return res.status(400).json({
-          success: false,
-          message: "Please provide all required fields",
-        });
+        return res
+          .status(400)
+          .json({
+            success: false,
+            message: "Please provide all required fields",
+          });
       }
 
-      // Get image URLs from uploaded files
       const imageUrls = req.files
         ? req.files.map((file) => `/uploads/${file.filename}`)
         : [];
 
-      // If no images uploaded, use default image
       if (imageUrls.length === 0) {
         imageUrls.push(
           "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267",
@@ -394,22 +389,20 @@ app.post(
 
       console.log("Property created successfully:", property._id);
 
-      res.status(201).json({
-        success: true,
-        message: "Property listed successfully!",
-        property,
-      });
+      res
+        .status(201)
+        .json({
+          success: true,
+          message: "Property listed successfully!",
+          property,
+        });
     } catch (error) {
       console.error("Error creating property:", error);
-      res.status(500).json({
-        success: false,
-        message: error.message,
-      });
+      res.status(500).json({ success: false, message: error.message });
     }
   },
 );
 
-// UPDATE PROPERTY (Landlord or Admin)
 app.put(
   "/api/landlord/properties/:id",
   protect,
@@ -417,25 +410,21 @@ app.put(
   async (req, res) => {
     try {
       console.log("Updating property:", req.params.id);
-      console.log("Update data:", req.body);
 
       const property = await Property.findById(req.params.id);
-
       if (!property) {
         return res
           .status(404)
           .json({ success: false, message: "Property not found" });
       }
 
-      // Check authorization (landlord who owns it OR admin)
       if (
         property.landlord.toString() !== req.user.id &&
         req.user.role !== "admin"
       ) {
-        return res.status(403).json({
-          success: false,
-          message: "Not authorized to update this property",
-        });
+        return res
+          .status(403)
+          .json({ success: false, message: "Not authorized" });
       }
 
       const {
@@ -450,10 +439,8 @@ app.put(
         existingImages,
       } = req.body;
 
-      // Handle images
       let imageUrls = [];
 
-      // Keep existing images if provided
       if (existingImages) {
         const existingImagesArray = Array.isArray(existingImages)
           ? existingImages
@@ -461,7 +448,6 @@ app.put(
         imageUrls = [...existingImagesArray];
       }
 
-      // Add new uploaded images
       if (req.files && req.files.length > 0) {
         const newImageUrls = req.files.map(
           (file) => `/uploads/${file.filename}`,
@@ -469,7 +455,6 @@ app.put(
         imageUrls = [...imageUrls, ...newImageUrls];
       }
 
-      // If no images at all, use default
       if (imageUrls.length === 0) {
         imageUrls = [
           "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267",
@@ -498,7 +483,6 @@ app.put(
       );
 
       console.log("Property updated successfully:", updatedProperty._id);
-
       res.json({
         success: true,
         message: "Property updated successfully!",
@@ -511,21 +495,18 @@ app.put(
   },
 );
 
-// Delete specific image from property
 app.delete(
   "/api/landlord/properties/:id/images/:imageIndex",
   protect,
   async (req, res) => {
     try {
       const property = await Property.findById(req.params.id);
-
       if (!property) {
         return res
           .status(404)
           .json({ success: false, message: "Property not found" });
       }
 
-      // Check authorization
       if (
         property.landlord.toString() !== req.user.id &&
         req.user.role !== "admin"
@@ -537,7 +518,6 @@ app.delete(
 
       const imageIndex = parseInt(req.params.imageIndex);
       if (imageIndex >= 0 && imageIndex < property.images.length) {
-        // Remove image from array
         property.images.splice(imageIndex, 1);
         await property.save();
       }
@@ -553,11 +533,9 @@ app.delete(
   },
 );
 
-// Delete property
 app.delete("/api/landlord/properties/:id", protect, async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
-
     if (!property) {
       return res
         .status(404)
@@ -573,7 +551,6 @@ app.delete("/api/landlord/properties/:id", protect, async (req, res) => {
         .json({ success: false, message: "Not authorized" });
     }
 
-    // Delete associated images from uploads folder
     if (property.images && property.images.length > 0) {
       property.images.forEach((imagePath) => {
         if (imagePath && imagePath.startsWith("/uploads/")) {
@@ -593,14 +570,12 @@ app.delete("/api/landlord/properties/:id", protect, async (req, res) => {
   }
 });
 
-// Toggle property availability
 app.patch(
   "/api/landlord/properties/:id/toggle-availability",
   protect,
   async (req, res) => {
     try {
       const property = await Property.findById(req.params.id);
-
       if (!property) {
         return res
           .status(404)
@@ -635,7 +610,6 @@ app.patch(
 app.post("/api/bookings", protect, async (req, res) => {
   try {
     const { propertyId, startDate, endDate } = req.body;
-
     const property = await Property.findById(propertyId);
     if (!property) {
       return res
@@ -895,7 +869,6 @@ app.get("/api/seed", async (req, res) => {
     await Property.deleteMany({});
     await Booking.deleteMany({});
 
-    console.log("Creating admin...");
     const adminPassword = await bcrypt.hash("Admin@123", 10);
     const admin = await User.create({
       name: "Super Admin",
@@ -906,7 +879,6 @@ app.get("/api/seed", async (req, res) => {
       isVerified: true,
     });
 
-    console.log("Creating landlord...");
     const landlordPassword = await bcrypt.hash("password123", 10);
     const landlord = await User.create({
       name: "John Smith",
@@ -917,7 +889,6 @@ app.get("/api/seed", async (req, res) => {
       isVerified: true,
     });
 
-    console.log("Creating tenant...");
     const tenantPassword = await bcrypt.hash("password123", 10);
     const tenant = await User.create({
       name: "Emma Wilson",
@@ -928,7 +899,6 @@ app.get("/api/seed", async (req, res) => {
       isVerified: true,
     });
 
-    console.log("Creating properties...");
     await Property.create([
       {
         title: "Luxury Downtown Apartment",

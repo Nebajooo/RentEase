@@ -7,12 +7,14 @@ const MyProperties = () => {
   const navigate = useNavigate();
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [imageTimestamp, setImageTimestamp] = useState(Date.now());
 
   useEffect(() => {
     fetchProperties();
   }, []);
 
   const fetchProperties = async () => {
+    setLoading(true);
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
@@ -22,7 +24,9 @@ const MyProperties = () => {
         },
       );
       setProperties(response.data.properties || []);
+      setImageTimestamp(Date.now());
     } catch (error) {
+      console.error("Error fetching properties:", error);
       toast.error("Failed to load properties");
     } finally {
       setLoading(false);
@@ -30,7 +34,11 @@ const MyProperties = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Delete this property? This cannot be undone.")) {
+    if (
+      window.confirm(
+        "Are you sure you want to delete this property? This cannot be undone.",
+      )
+    ) {
       try {
         const token = localStorage.getItem("token");
         await axios.delete(
@@ -39,10 +47,10 @@ const MyProperties = () => {
             headers: { Authorization: `Bearer ${token}` },
           },
         );
-        toast.success("Property deleted");
-        fetchProperties();
+        toast.success("Property deleted successfully");
+        await fetchProperties();
       } catch (error) {
-        toast.error("Delete failed");
+        toast.error("Failed to delete property");
       }
     }
   };
@@ -58,16 +66,32 @@ const MyProperties = () => {
         },
       );
       toast.success(response.data.message);
-      fetchProperties();
+      await fetchProperties();
     } catch (error) {
-      toast.error("Failed to update");
+      toast.error("Failed to update status");
     }
+  };
+
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) {
+      return `https://via.placeholder.com/300x200?text=No+Image&t=${Date.now()}`;
+    }
+
+    if (imagePath.startsWith("http")) {
+      return `${imagePath}?t=${imageTimestamp}`;
+    }
+
+    if (imagePath.startsWith("/uploads/")) {
+      return `http://localhost:5000${imagePath}?t=${imageTimestamp}`;
+    }
+
+    return `https://via.placeholder.com/300x200?text=Invalid+Path&t=${Date.now()}`;
   };
 
   if (loading) {
     return (
       <div className="flex justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
       </div>
     );
   }
@@ -84,17 +108,25 @@ const MyProperties = () => {
           </button>
           <h1 className="text-3xl font-bold">My Properties</h1>
         </div>
-        <Link
-          to="/landlord/add-property"
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg"
-        >
-          + Add New
-        </Link>
+        <div className="flex gap-2">
+          <button
+            onClick={fetchProperties}
+            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+          >
+            🔄 Refresh
+          </button>
+          <Link
+            to="/landlord/add-property"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          >
+            + Add New
+          </Link>
+        </div>
       </div>
 
       {properties.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-lg shadow-md">
-          <p className="text-gray-500">No properties yet</p>
+          <p className="text-gray-500">You haven't listed any properties yet</p>
           <Link
             to="/landlord/add-property"
             className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg mt-4"
@@ -110,15 +142,21 @@ const MyProperties = () => {
               className="bg-white rounded-lg shadow-md overflow-hidden"
             >
               <div className="flex flex-col md:flex-row">
-                <img
-                  src={
-                    property.images?.[0]
-                      ? `http://localhost:5000${property.images[0]}`
-                      : "https://via.placeholder.com/300x200"
-                  }
-                  alt={property.title}
-                  className="w-full md:w-64 h-48 object-cover"
-                />
+                <div className="relative w-full md:w-64 h-48 bg-gray-100">
+                  <img
+                    src={getImageUrl(property.images?.[0])}
+                    alt={property.title}
+                    className="w-full h-48 object-cover"
+                    onError={(e) => {
+                      e.target.src = `https://via.placeholder.com/300x200?text=Error&t=${Date.now()}`;
+                    }}
+                  />
+                  {property.images && property.images.length > 1 && (
+                    <div className="absolute bottom-2 right-2 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded">
+                      +{property.images.length - 1} more
+                    </div>
+                  )}
+                </div>
                 <div className="flex-1 p-6">
                   <div className="flex justify-between items-start">
                     <div>
@@ -134,7 +172,7 @@ const MyProperties = () => {
                         </span>
                       </div>
                       <div className="text-2xl font-bold text-blue-600 mt-2">
-                        ETB {property.price}/month
+                        ₹{property.price}/month
                       </div>
                     </div>
                     <div
@@ -148,19 +186,19 @@ const MyProperties = () => {
                       onClick={() =>
                         navigate(`/landlord/edit-property/${property._id}`)
                       }
-                      className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600"
+                      className="bg-yellow-500 text-white px-4 py-2 rounded-lg"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleToggleAvailability(property._id)}
-                      className={`px-4 py-2 rounded-lg text-white ${property.isAvailable ? "bg-red-600 hover:bg-red-700" : "bg-green-600 hover:bg-green-700"}`}
+                      className={`px-4 py-2 rounded-lg text-white ${property.isAvailable ? "bg-red-600" : "bg-green-600"}`}
                     >
                       {property.isAvailable ? "Mark Rented" : "Mark Available"}
                     </button>
                     <button
                       onClick={() => handleDelete(property._id)}
-                      className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+                      className="bg-red-600 text-white px-4 py-2 rounded-lg"
                     >
                       Delete
                     </button>
