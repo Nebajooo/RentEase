@@ -13,7 +13,6 @@ const {
 
 router.use(protect);
 
-// Role-specific dashboards
 router.get("/landlord", authorize("landlord"), getLandlordDashboard);
 
 router.get("/tenant", authorize("tenant"), getTenantDashboard);

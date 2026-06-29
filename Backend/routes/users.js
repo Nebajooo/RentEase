@@ -36,7 +36,6 @@ router.get("/stats", getUserStats);
 router.get("/notifications", getNotifications);
 router.put("/notifications/:id/read", markNotificationRead);
 
-// Landlord specific routes
 router.post("/upload-kyc", authorize("landlord"), uploadKYC, uploadKYCHandler);
 
 // Admin only routes

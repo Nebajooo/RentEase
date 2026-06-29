@@ -208,7 +208,7 @@ const EditProperty = () => {
                       onClick={() => removeExistingImage(index)}
                       className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6"
                     >
-                      ×
+                      x
                     </button>
                   </div>
                 ))}
@@ -241,7 +241,7 @@ const EditProperty = () => {
                       onClick={() => removeNewImage(index)}
                       className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6"
                     >
-                      ×
+                      x
                     </button>
                   </div>
                 ))}

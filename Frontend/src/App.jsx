@@ -52,7 +52,6 @@ const Navbar = () => {
     <nav className="bg-white shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
-          {/* Logo */}
           <Link to="/" className="text-2xl font-bold text-blue-600">
             RentEase
           </Link>
@@ -171,7 +170,6 @@ const Navbar = () => {
   );
 };
 
-// Footer Component
 const Footer = () => {
   return (
     <footer className="bg-gray-800 text-white py-8 mt-auto">
@@ -237,7 +235,6 @@ const Footer = () => {
   );
 };
 
-// Main App Component
 function App() {
   return (
     <div className="min-h-screen flex flex-col">
@@ -245,7 +242,6 @@ function App() {
       <Navbar />
       <div className="flex-grow">
         <Routes>
-          {/* Public Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
