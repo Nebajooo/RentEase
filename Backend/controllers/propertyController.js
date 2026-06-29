@@ -3,9 +3,6 @@ const Booking = require("../models/Booking");
 const fs = require("fs");
 const path = require("path");
 
-// @desc    Create new property
-// @route   POST /api/properties
-// @access  Private (Landlord)
 exports.createProperty = async (req, res) => {
   try {
     // Get image URLs from uploaded files
@@ -41,9 +38,6 @@ exports.createProperty = async (req, res) => {
   }
 };
 
-// @desc    Get all properties with advanced filters
-// @route   GET /api/properties
-// @access  Public
 exports.getProperties = async (req, res) => {
   try {
     let query = { isApproved: true };
@@ -150,9 +144,6 @@ exports.getProperties = async (req, res) => {
   }
 };
 
-// @desc    Get single property by ID
-// @route   GET /api/properties/:id
-// @access  Public
 exports.getPropertyById = async (req, res) => {
   try {
     const property = await Property.findById(req.params.id).populate(
@@ -190,9 +181,6 @@ exports.getPropertyById = async (req, res) => {
   }
 };
 
-// @desc    Update property
-// @route   PUT /api/properties/:id
-// @access  Private (Landlord/Owner)
 exports.updateProperty = async (req, res) => {
   try {
     let property = await Property.findById(req.params.id);
@@ -253,9 +241,6 @@ exports.updateProperty = async (req, res) => {
   }
 };
 
-// @desc    Delete property
-// @route   DELETE /api/properties/:id
-// @access  Private (Landlord/Owner)
 exports.deleteProperty = async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
@@ -299,9 +284,6 @@ exports.deleteProperty = async (req, res) => {
   }
 };
 
-// @desc    Toggle property availability
-// @route   PATCH /api/properties/:id/toggle-availability
-// @access  Private (Landlord)
 exports.toggleAvailability = async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
@@ -331,9 +313,6 @@ exports.toggleAvailability = async (req, res) => {
   }
 };
 
-// @desc    Get landlord's properties
-// @route   GET /api/properties/landlord/my-properties
-// @access  Private (Landlord)
 exports.getMyProperties = async (req, res) => {
   try {
     const properties = await Property.find({ landlord: req.user.id }).sort({
@@ -370,9 +349,6 @@ exports.getMyProperties = async (req, res) => {
   }
 };
 
-// @desc    Get featured properties (for homepage)
-// @route   GET /api/properties/featured
-// @access  Public
 exports.getFeaturedProperties = async (req, res) => {
   try {
     const properties = await Property.find({

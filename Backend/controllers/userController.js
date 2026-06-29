@@ -5,9 +5,6 @@ const Review = require("../models/Review");
 const { sendKYCStatusEmail } = require("../utils/emailService");
 const fs = require("fs");
 
-// @desc    Get user profile
-// @route   GET /api/users/profile
-// @access  Private
 exports.getUserProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
@@ -31,9 +28,6 @@ exports.getUserProfile = async (req, res) => {
   }
 };
 
-// @desc    Update user profile
-// @route   PUT /api/users/profile
-// @access  Private
 exports.updateUserProfile = async (req, res) => {
   try {
     const { name, phone } = req.body;
@@ -70,9 +64,6 @@ exports.updateUserProfile = async (req, res) => {
   }
 };
 
-// @desc    Change password
-// @route   PUT /api/users/change-password
-// @access  Private
 exports.changePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
@@ -110,9 +101,6 @@ exports.changePassword = async (req, res) => {
   }
 };
 
-// @desc    Upload avatar
-// @route   POST /api/users/upload-avatar
-// @access  Private
 exports.uploadAvatarHandler = async (req, res) => {
   try {
     if (!req.file) {
@@ -148,9 +136,6 @@ exports.uploadAvatarHandler = async (req, res) => {
   }
 };
 
-// @desc    Upload KYC document
-// @route   POST /api/users/upload-kyc
-// @access  Private (Landlord)
 exports.uploadKYCHandler = async (req, res) => {
   try {
     if (req.user.role !== "landlord") {
@@ -194,9 +179,6 @@ exports.uploadKYCHandler = async (req, res) => {
   }
 };
 
-// @desc    Verify phone
-// @route   POST /api/users/verify-phone
-// @access  Private
 exports.verifyPhone = async (req, res) => {
   try {
     const { otp } = req.body;
@@ -225,9 +207,6 @@ exports.verifyPhone = async (req, res) => {
   }
 };
 
-// @desc    Get user statistics
-// @route   GET /api/users/stats
-// @access  Private
 exports.getUserStats = async (req, res) => {
   try {
     let stats = {};
@@ -308,9 +287,6 @@ exports.getUserStats = async (req, res) => {
   }
 };
 
-// @desc    Delete account
-// @route   DELETE /api/users/account
-// @access  Private
 exports.deleteAccount = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -339,9 +315,6 @@ exports.deleteAccount = async (req, res) => {
   }
 };
 
-// @desc    Get all users (Admin only)
-// @route   GET /api/users/all
-// @access  Private/Admin
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.find().select("-password");

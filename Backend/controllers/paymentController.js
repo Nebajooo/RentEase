@@ -3,9 +3,6 @@ const Booking = require("../models/Booking");
 const Property = require("../models/Property");
 const { sendPaymentConfirmationEmail } = require("../utils/emailService");
 
-// @desc    Create payment intent
-// @route   POST /api/payments/create-payment-intent
-// @access  Private
 exports.createPaymentIntent = async (req, res) => {
   try {
     const { bookingId } = req.body;
@@ -57,9 +54,6 @@ exports.createPaymentIntent = async (req, res) => {
   }
 };
 
-// @desc    Confirm payment
-// @route   POST /api/payments/confirm-payment
-// @access  Private
 exports.confirmPayment = async (req, res) => {
   try {
     const { paymentIntentId } = req.body;
@@ -111,9 +105,6 @@ exports.confirmPayment = async (req, res) => {
   }
 };
 
-// @desc    Get payment history
-// @route   GET /api/payments/history
-// @access  Private
 exports.getPaymentHistory = async (req, res) => {
   try {
     const bookings = await Booking.find({
@@ -148,9 +139,6 @@ exports.getPaymentHistory = async (req, res) => {
   }
 };
 
-// @desc    Refund payment
-// @route   POST /api/payments/:paymentId/refund
-// @access  Private/Admin
 exports.refundPayment = async (req, res) => {
   try {
     const { paymentId } = req.params;
@@ -175,9 +163,6 @@ exports.refundPayment = async (req, res) => {
   }
 };
 
-// @desc    Get payment methods
-// @route   GET /api/payments/methods
-// @access  Private
 exports.getPaymentMethods = async (req, res) => {
   try {
     // Get customer's payment methods from Stripe
@@ -196,9 +181,6 @@ exports.getPaymentMethods = async (req, res) => {
   }
 };
 
-// @desc    Add payment method
-// @route   POST /api/payments/methods
-// @access  Private
 exports.addPaymentMethod = async (req, res) => {
   try {
     const { paymentMethodId } = req.body;
@@ -217,9 +199,6 @@ exports.addPaymentMethod = async (req, res) => {
   }
 };
 
-// @desc    Remove payment method
-// @route   DELETE /api/payments/methods/:methodId
-// @access  Private
 exports.removePaymentMethod = async (req, res) => {
   try {
     const { methodId } = req.params;
@@ -237,9 +216,6 @@ exports.removePaymentMethod = async (req, res) => {
   }
 };
 
-// @desc    Setup automatic payments
-// @route   POST /api/payments/setup-automatic
-// @access  Private
 exports.setupAutomaticPayments = async (req, res) => {
   try {
     const { bookingId, paymentMethodId } = req.body;
@@ -268,9 +244,6 @@ exports.setupAutomaticPayments = async (req, res) => {
   }
 };
 
-// @desc    Get landlord earnings
-// @route   GET /api/payments/earnings
-// @access  Private (Landlord)
 exports.getEarnings = async (req, res) => {
   try {
     const bookings = await Booking.find({
@@ -301,9 +274,6 @@ exports.getEarnings = async (req, res) => {
   }
 };
 
-// @desc    Stripe webhook
-// @route   POST /api/payments/webhook
-// @access  Public
 exports.stripeWebhook = async (req, res) => {
   const sig = req.headers["stripe-signature"];
   let event;

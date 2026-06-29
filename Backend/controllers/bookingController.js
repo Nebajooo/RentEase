@@ -7,9 +7,6 @@ const {
   sendBookingRejectedEmail,
 } = require("../utils/emailService");
 
-// @desc    Create booking request
-// @route   POST /api/bookings
-// @access  Private (Tenant)
 exports.createBooking = async (req, res) => {
   try {
     const { propertyId, startDate, endDate, duration } = req.body;
@@ -47,7 +44,6 @@ exports.createBooking = async (req, res) => {
       });
     }
 
-    // Calculate total amount
     const monthlyRent = property.price;
     const securityDeposit = monthlyRent; // 1 month deposit
     const totalAmount = monthlyRent * duration + securityDeposit;
@@ -96,9 +92,6 @@ exports.createBooking = async (req, res) => {
   }
 };
 
-// @desc    Get my bookings (Tenant)
-// @route   GET /api/bookings/my-bookings
-// @access  Private (Tenant)
 exports.getMyBookings = async (req, res) => {
   try {
     const bookings = await Booking.find({ tenant: req.user.id })
@@ -118,9 +111,6 @@ exports.getMyBookings = async (req, res) => {
   }
 };
 
-// @desc    Get landlord booking requests
-// @route   GET /api/bookings/requests
-// @access  Private (Landlord)
 exports.getBookingRequests = async (req, res) => {
   try {
     const requests = await Booking.find({
@@ -143,9 +133,6 @@ exports.getBookingRequests = async (req, res) => {
   }
 };
 
-// @desc    Get landlord all bookings
-// @route   GET /api/bookings/landlord-bookings
-// @access  Private (Landlord)
 exports.getLandlordBookings = async (req, res) => {
   try {
     const bookings = await Booking.find({ landlord: req.user.id })
@@ -177,9 +164,6 @@ exports.getLandlordBookings = async (req, res) => {
   }
 };
 
-// @desc    Get booking details
-// @route   GET /api/bookings/:id
-// @access  Private
 exports.getBookingDetails = async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.id)
@@ -218,9 +202,6 @@ exports.getBookingDetails = async (req, res) => {
   }
 };
 
-// @desc    Approve booking request
-// @route   PUT /api/bookings/:id/approve
-// @access  Private (Landlord)
 exports.approveBooking = async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.id)
@@ -275,9 +256,6 @@ exports.approveBooking = async (req, res) => {
   }
 };
 
-// @desc    Reject booking request
-// @route   PUT /api/bookings/:id/reject
-// @access  Private (Landlord)
 exports.rejectBooking = async (req, res) => {
   try {
     const { reason } = req.body;
@@ -321,9 +299,6 @@ exports.rejectBooking = async (req, res) => {
   }
 };
 
-// @desc    Cancel booking (Tenant)
-// @route   PUT /api/bookings/:id/cancel
-// @access  Private (Tenant)
 exports.cancelBooking = async (req, res) => {
   try {
     const { reason } = req.body;
@@ -372,9 +347,6 @@ exports.cancelBooking = async (req, res) => {
   }
 };
 
-// @desc    Complete booking (after stay)
-// @route   PUT /api/bookings/:id/complete
-// @access  Private (Landlord/Tenant)
 exports.completeBooking = async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.id);
@@ -422,9 +394,6 @@ exports.completeBooking = async (req, res) => {
   }
 };
 
-// @desc    Check property availability
-// @route   POST /api/bookings/check-availability
-// @access  Public
 exports.checkAvailability = async (req, res) => {
   try {
     const { propertyId, startDate, endDate } = req.body;
@@ -455,9 +424,6 @@ exports.checkAvailability = async (req, res) => {
   }
 };
 
-// @desc    Reschedule booking
-// @route   PUT /api/bookings/:id/reschedule
-// @access  Private
 exports.rescheduleBooking = async (req, res) => {
   try {
     const { startDate, endDate, duration } = req.body;
@@ -521,9 +487,6 @@ exports.rescheduleBooking = async (req, res) => {
   }
 };
 
-// @desc    Upload contract
-// @route   POST /api/bookings/:id/upload-contract
-// @access  Private (Landlord)
 exports.uploadContract = async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.id);
@@ -565,9 +528,6 @@ exports.uploadContract = async (req, res) => {
   }
 };
 
-// @desc    Sign contract
-// @route   POST /api/bookings/:id/sign-contract
-// @access  Private (Tenant)
 exports.signContract = async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.id);

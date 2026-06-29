@@ -2,9 +2,6 @@ const Review = require("../models/Review");
 const Booking = require("../models/Booking");
 const Property = require("../models/Property");
 
-// @desc    Create review for property
-// @route   POST /api/reviews
-// @access  Private (Tenant)
 exports.createReview = async (req, res) => {
   try {
     const {
@@ -33,23 +30,19 @@ exports.createReview = async (req, res) => {
     }
 
     if (booking.status !== "completed") {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Can only review completed bookings",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Can only review completed bookings",
+      });
     }
 
     // Check if review already exists
     const existingReview = await Review.findOne({ booking: bookingId });
     if (existingReview) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Review already submitted for this booking",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Review already submitted for this booking",
+      });
     }
 
     const review = await Review.create({
@@ -76,9 +69,6 @@ exports.createReview = async (req, res) => {
   }
 };
 
-// @desc    Get reviews for a property
-// @route   GET /api/reviews/property/:propertyId
-// @access  Public
 exports.getPropertyReviews = async (req, res) => {
   try {
     const { propertyId } = req.params;
@@ -147,9 +137,6 @@ exports.getPropertyReviews = async (req, res) => {
   }
 };
 
-// @desc    Landlord response to review
-// @route   PUT /api/reviews/:id/respond
-// @access  Private (Landlord)
 exports.respondToReview = async (req, res) => {
   try {
     const { response } = req.body;
@@ -181,9 +168,6 @@ exports.respondToReview = async (req, res) => {
   }
 };
 
-// @desc    Mark review as helpful
-// @route   POST /api/reviews/:id/helpful
-// @access  Private
 exports.markHelpful = async (req, res) => {
   try {
     const review = await Review.findById(req.params.id);

@@ -2,7 +2,7 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-// Ensure upload directory exists
+// To Ensure upload directory exists
 const uploadDir = "uploads/";
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
@@ -49,7 +49,6 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Create multer instance
 const upload = multer({
   storage: storage,
   limits: {

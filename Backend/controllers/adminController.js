@@ -5,9 +5,6 @@ const Review = require("../models/Review");
 const AdminLog = require("../models/AdminLog");
 const { sendKYCStatusEmail } = require("../utils/emailService");
 
-// @desc    Get all users
-// @route   GET /api/admin/users
-// @access  Private/Admin
 exports.getAllUsers = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -46,9 +43,6 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
-// @desc    Suspend user
-// @route   PUT /api/admin/users/:id/suspend
-// @access  Private/Admin
 exports.suspendUser = async (req, res) => {
   try {
     const { reason } = req.body;
@@ -94,9 +88,6 @@ exports.suspendUser = async (req, res) => {
   }
 };
 
-// @desc    Unsuspend user
-// @route   PUT /api/admin/users/:id/unsuspend
-// @access  Private/Admin
 exports.unsuspendUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -133,9 +124,6 @@ exports.unsuspendUser = async (req, res) => {
   }
 };
 
-// @desc    Verify KYC
-// @route   PUT /api/admin/users/:id/verify-kyc
-// @access  Private/Admin
 exports.verifyKYC = async (req, res) => {
   try {
     const { status, reason } = req.body;
@@ -182,9 +170,6 @@ exports.verifyKYC = async (req, res) => {
   }
 };
 
-// @desc    Get properties for moderation
-// @route   GET /api/admin/properties
-// @access  Private/Admin
 exports.getPropertiesForModeration = async (req, res) => {
   try {
     const { status } = req.query;
@@ -209,9 +194,6 @@ exports.getPropertiesForModeration = async (req, res) => {
   }
 };
 
-// @desc    Approve property
-// @route   PUT /api/admin/properties/:id/approve
-// @access  Private/Admin
 exports.approveProperty = async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
@@ -247,9 +229,6 @@ exports.approveProperty = async (req, res) => {
   }
 };
 
-// @desc    Reject property
-// @route   PUT /api/admin/properties/:id/reject
-// @access  Private/Admin
 exports.rejectProperty = async (req, res) => {
   try {
     const { reason } = req.body;
@@ -285,9 +264,6 @@ exports.rejectProperty = async (req, res) => {
   }
 };
 
-// @desc    Delete user (Admin)
-// @route   DELETE /api/admin/users/:id
-// @access  Private/Admin
 exports.deleteUserByAdmin = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -339,9 +315,6 @@ exports.deleteUserByAdmin = async (req, res) => {
   }
 };
 
-// @desc    Delete property (Admin)
-// @route   DELETE /api/admin/properties/:id
-// @access  Private/Admin
 exports.deletePropertyByAdmin = async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
@@ -376,9 +349,6 @@ exports.deletePropertyByAdmin = async (req, res) => {
   }
 };
 
-// @desc    Get admin stats
-// @route   GET /api/admin/stats
-// @access  Private/Admin
 exports.getAdminStats = async (req, res) => {
   try {
     const totalUsers = await User.countDocuments();
@@ -452,9 +422,6 @@ exports.getAdminStats = async (req, res) => {
   }
 };
 
-// @desc    Get disputes
-// @route   GET /api/admin/disputes
-// @access  Private/Admin
 exports.getDisputes = async (req, res) => {
   try {
     const disputes = await Booking.find({
@@ -478,9 +445,6 @@ exports.getDisputes = async (req, res) => {
   }
 };
 
-// @desc    Resolve dispute
-// @route   PUT /api/admin/disputes/:id/resolve
-// @access  Private/Admin
 exports.resolveDispute = async (req, res) => {
   try {
     const { resolution, refundAmount } = req.body;
@@ -524,9 +488,6 @@ exports.resolveDispute = async (req, res) => {
   }
 };
 
-// @desc    Get system logs
-// @route   GET /api/admin/logs
-// @access  Private/Admin
 exports.getSystemLogs = async (req, res) => {
   try {
     const logs = await AdminLog.find()
@@ -546,9 +507,6 @@ exports.getSystemLogs = async (req, res) => {
   }
 };
 
-// @desc    Get platform analytics
-// @route   GET /api/admin/analytics
-// @access  Private/Admin
 exports.getPlatformAnalytics = async (req, res) => {
   try {
     const monthlyUsers = await User.aggregate([

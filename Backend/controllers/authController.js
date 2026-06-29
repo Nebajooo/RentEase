@@ -14,9 +14,6 @@ const generateToken = (id) => {
   });
 };
 
-// @desc    Register user
-// @route   POST /api/auth/register
-// @access  Public
 exports.register = async (req, res) => {
   try {
     const { name, email, password, phone, role } = req.body;
@@ -33,7 +30,6 @@ exports.register = async (req, res) => {
     // Create verification token
     const verificationToken = crypto.randomBytes(32).toString("hex");
 
-    // Create user
     const user = await User.create({
       name,
       email,
@@ -75,9 +71,6 @@ exports.register = async (req, res) => {
   }
 };
 
-// @desc    Login user
-// @route   POST /api/auth/login
-// @access  Public
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -139,9 +132,6 @@ exports.login = async (req, res) => {
   }
 };
 
-// @desc    Get current user
-// @route   GET /api/auth/me
-// @access  Private
 exports.getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
@@ -158,9 +148,6 @@ exports.getMe = async (req, res) => {
   }
 };
 
-// @desc    Verify email
-// @route   GET /api/auth/verify-email/:token
-// @access  Public
 exports.verifyEmail = async (req, res) => {
   try {
     const user = await User.findOne({
@@ -203,9 +190,6 @@ exports.verifyEmail = async (req, res) => {
   }
 };
 
-// @desc    Forgot password
-// @route   POST /api/auth/forgot-password
-// @access  Public
 exports.forgotPassword = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
@@ -239,9 +223,6 @@ exports.forgotPassword = async (req, res) => {
   }
 };
 
-// @desc    Reset password
-// @route   PUT /api/auth/reset-password/:token
-// @access  Public
 exports.resetPassword = async (req, res) => {
   try {
     const user = await User.findOne({
@@ -274,9 +255,6 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
-// @desc    Logout user
-// @route   POST /api/auth/logout
-// @access  Private
 exports.logout = async (req, res) => {
   res.status(200).json({
     success: true,
@@ -284,24 +262,15 @@ exports.logout = async (req, res) => {
   });
 };
 
-// @desc    Google OAuth
-// @route   GET /api/auth/google
-// @access  Public
 exports.googleAuth = (req, res) => {
   // Redirect to Google OAuth
   const googleAuthURL = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${process.env.FRONTEND_URL}/api/auth/google/callback&response_type=code&scope=profile email`;
   res.redirect(googleAuthURL);
 };
 
-// @desc    Google OAuth Callback
-// @route   GET /api/auth/google/callback
-// @access  Public
 exports.googleAuthCallback = async (req, res) => {
   try {
     const { code } = req.query;
-
-    // Exchange code for tokens (implement actual Google OAuth flow)
-    // For demo purposes, create/sign in user
 
     res.redirect(`${process.env.FRONTEND_URL}/login`);
   } catch (error) {

@@ -28,13 +28,11 @@ router.delete("/account", deleteAccount);
 // Avatar upload
 router.post("/upload-avatar", uploadAvatar, uploadAvatarHandler);
 
-// Phone verification
 router.post("/verify-phone", verifyPhone);
 
 // User statistics
 router.get("/stats", getUserStats);
 
-// Notifications
 router.get("/notifications", getNotifications);
 router.put("/notifications/:id/read", markNotificationRead);
 

@@ -72,7 +72,6 @@ router.get(
   getPropertyAnalytics,
 );
 
-// Report property (for tenants)
 router.post("/:id/report", authorize("tenant"), reportProperty);
 
 module.exports = router;

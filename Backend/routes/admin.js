@@ -43,15 +43,12 @@ router.put("/properties/:id/approve", approveProperty);
 router.put("/properties/:id/reject", rejectProperty);
 router.delete("/properties/:id", deletePropertyByAdmin);
 
-// Dispute resolution
 router.get("/disputes", getDisputes);
 router.put("/disputes/:id/resolve", resolveDispute);
 
-// Reports & flags
 router.get("/reports", getReports);
 router.put("/reports/:id/resolve", resolveReport);
 
-// System notifications
 router.post("/notifications/send", sendSystemNotification);
 
 module.exports = router;

@@ -60,7 +60,7 @@ mongoose
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.log("❌ MongoDB Error:", err));
 
-// ==================== SCHEMAS ====================
+// ===== SCHEMAS ===
 
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -132,8 +132,7 @@ const User = mongoose.model("User", userSchema);
 const Property = mongoose.model("Property", propertySchema);
 const Booking = mongoose.model("Booking", bookingSchema);
 
-// ==================== AUTH MIDDLEWARE ====================
-
+// ===== AUTH MIDDLEWARE ======
 const protect = async (req, res, next) => {
   let token;
   if (
@@ -168,7 +167,7 @@ const isAdmin = async (req, res, next) => {
   }
 };
 
-// ==================== AUTH ROUTES ====================
+// ===== AUTH ROUTES =====
 
 app.post("/api/auth/register", async (req, res) => {
   try {
@@ -258,7 +257,7 @@ app.get("/api/users/profile", protect, async (req, res) => {
   res.json({ success: true, user: req.user });
 });
 
-// ==================== PROPERTY ROUTES ====================
+// ===== PROPERTY ROUTES ====
 
 app.get("/api/properties", async (req, res) => {
   try {
@@ -323,12 +322,10 @@ app.post(
       console.log("Files:", req.files);
 
       if (req.user.role !== "landlord") {
-        return res
-          .status(403)
-          .json({
-            success: false,
-            message: "Only landlords can list properties",
-          });
+        return res.status(403).json({
+          success: false,
+          message: "Only landlords can list properties",
+        });
       }
 
       const {
@@ -350,12 +347,10 @@ app.post(
         !bedrooms ||
         !bathrooms
       ) {
-        return res
-          .status(400)
-          .json({
-            success: false,
-            message: "Please provide all required fields",
-          });
+        return res.status(400).json({
+          success: false,
+          message: "Please provide all required fields",
+        });
       }
 
       const imageUrls = req.files
@@ -389,13 +384,11 @@ app.post(
 
       console.log("Property created successfully:", property._id);
 
-      res
-        .status(201)
-        .json({
-          success: true,
-          message: "Property listed successfully!",
-          property,
-        });
+      res.status(201).json({
+        success: true,
+        message: "Property listed successfully!",
+        property,
+      });
     } catch (error) {
       console.error("Error creating property:", error);
       res.status(500).json({ success: false, message: error.message });
@@ -605,7 +598,7 @@ app.patch(
   },
 );
 
-// ==================== BOOKING ROUTES ====================
+// ===== BOOKING ROUTES ===
 
 app.post("/api/bookings", protect, async (req, res) => {
   try {
@@ -708,7 +701,7 @@ app.put("/api/bookings/:id/reject", protect, async (req, res) => {
   }
 });
 
-// ==================== ADMIN ROUTES ====================
+// ===== ADMIN ROUTES ===
 
 app.get("/api/admin/stats", protect, isAdmin, async (req, res) => {
   try {
@@ -861,7 +854,7 @@ app.put(
   },
 );
 
-// ==================== SEED DATABASE ====================
+//==== SEED DATABASE ====
 
 app.get("/api/seed", async (req, res) => {
   try {
@@ -963,12 +956,11 @@ app.get("/api/seed", async (req, res) => {
   }
 });
 
-// ==================== START SERVER ====================
-
+// === START SERVER ===
 const PORT = 5000;
 app.listen(PORT, () => {
-  console.log(`\n🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📍 API URL: http://localhost:${PORT}/api`);
-  console.log(`🌱 Seed Database: http://localhost:${PORT}/api/seed`);
-  console.log(`📁 Uploads folder: ${path.join(__dirname, "uploads")}\n`);
+  console.log(`\n Server running on http://localhost:${PORT}`);
+  console.log(` API URL: http://localhost:${PORT}/api`);
+  console.log(` Seed Database: http://localhost:${PORT}/api/seed`);
+  console.log(` Uploads folder: ${path.join(__dirname, "uploads")}\n`);
 });
